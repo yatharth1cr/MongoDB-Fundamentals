@@ -2,14 +2,14 @@ Write code to execute below mongoDB operations
 
 ### 1. Create a database named blog.
 
-```
+```js
 use blog
 ```
 
 ### 2. Create a collection called 'articles'.
 
-```
-db.createCollection("articles")
+```js
+db.createCollection("articles");
 ```
 
 ### 3 Insert multiple documents(at least 3) into articles. It should have fields
@@ -42,158 +42,102 @@ tags: ['js', 'mongo']
 ```
 
 ```js
-db.articles.insertMany(threeDoc)
-{
-  acknowledged: true,
-  insertedIds: {
-    '0': ObjectId('66534b93a49fe511b1cdcdf6'),
-    '1': ObjectId('66534b93a49fe511b1cdcdf7'),
-    '2': ObjectId('66534b93a49fe511b1cdcdf8')
-  }
-}
+db.articles.insertMany(threeDoc);
 ```
 
 ### 4. Find all the articles using db.COLLECTION_NAME.find()
 
 ```js
--> db.articles.find()
-
-//OUTPUT
-
-[
-  {
-    _id: ObjectId('66534b93a49fe511b1cdcdf6'),
-    title: 'title1',
-    details: 'detail1',
-    author: { name: 'name1', email: 'email1@gmail.com', age: '10' },
-    tags: [ 'js', 'mongo' ]
-  },
-  {
-    _id: ObjectId('66534b93a49fe511b1cdcdf7'),
-    title: 'title2',
-    details: 'detail2',
-    author: { name: 'name2', email: 'email2@gmail.com', age: '20' },
-    tags: [ 'js', 'mongo' ]
-  },
-  {
-    _id: ObjectId('66534b93a49fe511b1cdcdf8'),
-    title: 'title3',
-    details: 'detail3',
-    author: { name: 'name3', email: 'email3@gmail.com', age: '30' },
-    tags: [ 'js', 'mongo' ]
-  }
-]
+db.articles.find();
 ```
 
 ### 5. Find a document using \_id field.
 
 ```js
--> db.articles.findOne({_id: ObjectId('66534b93a49fe511b1cdcdf6')})
-
-//OUTPUT
-{
-  _id: ObjectId('66534b93a49fe511b1cdcdf6'),
-  title: 'title1',
-  details: 'detail1',
-  author: { name: 'name1', email: 'email1@gmail.com', age: '10' },
-  tags: [ 'js', 'mongo' ]
-}
+db.articles.findOne({ _id: ObjectId("66534b93a49fe511b1cdcdf6") });
 ```
 
 ### 6. Find documents using title
 
 ```js
--> db.articles.findOne({title:"title2"})
-
-//OUTPUT
-
-{
-  _id: ObjectId('66534b93a49fe511b1cdcdf7'),
-  title: 'title2',
-  details: 'detail2',
-  author: { name: 'name2', email: 'email2@gmail.com', age: '20' },
-  tags: [ 'js', 'mongo' ]
-}
+db.articles.findOne({ title: "title2" });
 ```
 
 ### 7. Find documents using author's name field.
 
-```
--> db.articles.findOne({"author.name":'name1'})
-
-//OUTPUT
-
-{
-  _id: ObjectId('66534b93a49fe511b1cdcdf6'),
-  title: 'title1',
-  details: 'detail1',
-  author: { name: 'name1', email: 'email1@gmail.com', age: '10' },
-  tags: [ 'js', 'mongo' ]
-}
+```js
+db.articles.findOne({ "author.name": "name1" });
 ```
 
 ### 8. Find document using a specific tag.
 
-```
--> db.articles.findOne({tags:['js','mongo']})
-
-//OUTPUT
-
-{
-  _id: ObjectId('66534b93a49fe511b1cdcdf6'),
-  title: 'title1',
-  details: 'detail1',
-  author: { name: 'name1', email: 'email1@gmail.com', age: '10' },
-  tags: [ 'js', 'mongo' ]
-}
+```js
+db.articles.findOne({ tags: ["js", "mongo"] });
 ```
 
 ### 9. Update title of a document using its \_id field.
 
 ```js
--> db.articles.update({_id: ObjectId('66534b93a49fe511b1cdcdf8')},{$set:{title:"updatedTitle"}})
-
-//OUTPUT
-
-DeprecationWarning: Collection.update() is deprecated. Use updateOne, updateMany, or bulkWrite.
-{
-  acknowledged: true,
-  insertedId: null,
-  matchedCount: 1,
-  modifiedCount: 1,
-  upsertedCount: 0
-}
+db.articles.update(
+  { _id: ObjectId("66534b93a49fe511b1cdcdf8") },
+  { $set: { title: "updatedTitle" } }
+);
 ```
 
 ### 10. Update a author's name using article's title.
 
 ```js
-blog> db.articles.update({title:"title1"},{$set:{"author.name":"updatedName"}})
-//OUTPUT
-{
-  acknowledged: true,
-  insertedId: null,
-  matchedCount: 1,
-  modifiedCount: 1,
-  upsertedCount: 0
-}
+blog >
+  db.articles.update(
+    { title: "title1" },
+    { $set: { "author.name": "updatedName" } }
+  );
 ```
 
 ### 11. Rename details field to description from all articles in articles collection.
 
+```js
+db.articles.updateMany({}, { $rename: { details: "description" } });
+```
+
 ### 12. Add additional tag in a specific document.
+
+```js
+db.articles.updateOne(
+  { title: "title2" },
+  { $push: { tags: "additionalTag" } }
+);
+```
 
 ### 13. Update an article's title using $set and without $set.
 
-- Write the differences here ?
+```js
+//$set
+db.articles.updateOne(
+  { title: "title1" },
+  { $set: { title: "updatedTitle1" } }
+);
+```
+
+```js
+//without $set
+db.articles.updateOne({ title: "title1" }, { title: "updatedTitle1" }); // MongoInvalidArgumentError: Update document requires atomic operators
+```
 
 ### 14. find an article using title and increment author's age by 5.
 
+```js
+db.articles.updateOne({ title: "title2" }, { $inc: { "author.age": 5 } });
+```
+
 ### 15. Delete a document using \_id field with db.COLLECTION_NAME.remove().
 
-// Sample data
+```js
+db.articles.remove({ _id: ObjectId("66534b93a49fe511b1cdcdf6") });
+```
 
 ```js
+// Sample data
 db.users.insertMany([
   {
     age: 49,
@@ -305,9 +249,28 @@ db.users.insertMany([
 ]);
 ```
 
-Insert above data into database to perform below queries:-
+### Insert above data into database to perform below queries:-
 
-Find all males who play cricket.
-Update user with extra golf field in sports array whose name is "Steve Ortega".
-Find all users who play either 'football' or 'cricket'.
-Find all users whose name includes 'ri' in their name.
+- Find all males who play cricket.
+
+```js
+db.users.find({ gender: "Male", sports: { $in: ["cricket"] } });
+```
+
+- Update user with extra golf field in sports array whose name is "Steve Ortega".
+
+```js
+db.users.updateOne({ name: "Steve Ortega" }, { $push: { sports: "golf" } });
+```
+
+- Find all users who play either 'football' or 'cricket'.
+
+```js
+db.users.find({ sports: { $in: ["football", "cricket"] } });
+```
+
+- Find all users whose name includes 'ri' in their name.
+
+```js
+ddb.users.find({ name: { $regex: "ri" } });
+```
